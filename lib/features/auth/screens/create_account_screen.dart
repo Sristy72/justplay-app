@@ -70,7 +70,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
 
             // Main content (logo + titles) – centered vertically & horizontally
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.only(left: 12.0, right: 12.0, bottom: 12.0, top: 100),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center, // vertical center
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -291,3 +291,5 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     );
   }
 }
+
+
