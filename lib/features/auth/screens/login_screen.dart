@@ -59,6 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center, // vertical center
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  
+                  // LanguageSwitchRow(),
+                  const SizedBox(height: 5,),
                   // Logo + "justplay" text
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
