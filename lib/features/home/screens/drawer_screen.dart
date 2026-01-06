@@ -170,12 +170,11 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+              ),)
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _menuItem(String title, VoidCallback onTap) {
