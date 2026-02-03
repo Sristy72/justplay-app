@@ -3,27 +3,25 @@ class FetchPitchResponseModel {
 
   FetchPitchResponseModel({required this.pitches});
 
-  factory FetchPitchResponseModel.fromJson(Map<String, dynamic> json) {
+  /// Because API returns a LIST directly
+  factory FetchPitchResponseModel.fromJson(List<dynamic> json) {
     return FetchPitchResponseModel(
-      pitches: (json['pitches'] as List)
-          .map((pitchJson) => Pitch.fromJson(pitchJson))
-          .toList(),
+      pitches: json.map((e) => Pitch.fromJson(e)).toList(),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'pitches': pitches.map((pitch) => pitch.toJson()).toList(),
-    };
+  List<Map<String, dynamic>> toJson() {
+    return pitches.map((pitch) => pitch.toJson()).toList();
   }
 }
+
 
 class Pitch {
   final String id;
   final String name;
   final PitchImage image;
-  final String? city;
-  final String? sport;
+  final String city;   // extracted from city.name
+  final String sport;  // extracted from sport.name
   final String location;
   final int price;
   final String currency;
@@ -34,8 +32,8 @@ class Pitch {
     required this.id,
     required this.name,
     required this.image,
-    this.city,
-    this.sport,
+    required this.city,
+    required this.sport,
     required this.location,
     required this.price,
     required this.currency,
@@ -45,16 +43,16 @@ class Pitch {
 
   factory Pitch.fromJson(Map<String, dynamic> json) {
     return Pitch(
-      id: json['_id'],
-      name: json['name'],
-      image: PitchImage.fromJson(json['image']),
-      city: json['city'],
-      sport: json['sport'],
-      location: json['location'],
-      price: json['price'],
-      currency: json['currency'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
+      id: json['_id'] ?? '',
+      name: json['name'] ?? '',
+      image: PitchImage.fromJson(json['image'] ?? {}),
+      city: json['city']?['name'] ?? '',
+      sport: json['sport']?['name'] ?? '',
+      location: json['location'] ?? '',
+      price: json['price'] ?? 0,
+      currency: json['currency'] ?? '',
+      createdAt: json['createdAt'] ?? '',
+      updatedAt: json['updatedAt'] ?? '',
     );
   }
 
@@ -74,16 +72,20 @@ class Pitch {
   }
 }
 
+
 class PitchImage {
   final String url;
   final String publicId;
 
-  PitchImage({required this.url, required this.publicId});
+  PitchImage({
+    required this.url,
+    required this.publicId,
+  });
 
   factory PitchImage.fromJson(Map<String, dynamic> json) {
     return PitchImage(
-      url: json['url'],
-      publicId: json['public_id'],
+      url: json['url'] ?? '',
+      publicId: json['public_id'] ?? '',
     );
   }
 
@@ -94,3 +96,5 @@ class PitchImage {
     };
   }
 }
+
+

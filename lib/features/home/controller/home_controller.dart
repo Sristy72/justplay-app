@@ -134,16 +134,15 @@ class HomeController extends BaseController {
     );
 
     final result = await _homeRepo.createBooking(request);
-    
 
     result.fold(
       (fail) {
         setError(fail.message);
       },
-          (success) async {
-            // Critical: Refresh the bookings list immediately
-            final bookingController = Get.find<BookingController>();
-            await bookingController.fetchBooking();
+      (success) async {
+        // Critical: Refresh the bookings list immediately
+        final bookingController = Get.find<BookingController>();
+        await bookingController.fetchBooking();
       },
     );
   }
@@ -162,6 +161,7 @@ class HomeController extends BaseController {
       },
       (success) async {
         DPrint.log('Personal info: ${success.message}');
+        await _profileController.fetchProfile(); // Update profile with new city
         Get.to(() => MenuScreen());
         _multiFormDataManager.clear();
       },
