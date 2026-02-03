@@ -35,7 +35,7 @@ class HomeRepoImpl implements HomeRepo {
   }@override
   NetworkResult<FetchPitchResponseModel> fetchPitch(){
     return _apiClient.get(endpoint: ApiConstants.home.getPitch,
-      fromJsonT: (json) => FetchPitchResponseModel.fromJson(json as Map<String, dynamic>),
+      fromJsonT: (json) => FetchPitchResponseModel.fromJson(json),
     );
   }
 

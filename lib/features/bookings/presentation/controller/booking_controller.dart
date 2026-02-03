@@ -24,14 +24,30 @@ class BookingController extends BaseController {
     super.onClose();
   }
 
-  final Rxn<GetAllBookingResponseModel> bookingResponse = Rxn<GetAllBookingResponseModel>();
-
+  final Rxn<GetAllBookingResponseModel> bookingResponse =
+      Rxn<GetAllBookingResponseModel>();
 
   // Observable to track if a cancellation is in progress
   final RxBool isCancelling = false.obs;
 
-  // Get the current list of bookings (reactive)
-  List<Booking> get bookings => bookingResponse.value?.bookings ?? [];
+  // Selected status for filtering
+  final RxString selectedStatus = 'pending'.obs;
+
+  // List of all bookings
+  List<Booking> get allBookings => bookingResponse.value?.bookings ?? [];
+
+  // Filtered bookings based on selected status
+  List<Booking> get bookings {
+    final status = selectedStatus.value.toLowerCase();
+    return allBookings.where((booking) {
+      return booking.status.toLowerCase() == status;
+    }).toList();
+  }
+
+  void setStatus(String status) {
+    selectedStatus.value = status;
+    clearSelection();
+  }
 
   /// Fetch all bookings for the current user
   Future<void> fetchBooking() async {
@@ -41,11 +57,11 @@ class BookingController extends BaseController {
     final result = await _bookingRepo.fetchBooking();
 
     result.fold(
-          (fail) {
+      (fail) {
         setError(fail.message);
         DPrint.log('Booking fetch failed: ${fail.message}');
       },
-          (success) {
+      (success) {
         bookingResponse.value = success.data;
         DPrint.log('Bookings loaded: ${bookings.length} bookings');
       },
@@ -64,19 +80,21 @@ class BookingController extends BaseController {
     final result = await _bookingRepo.deleteBooking(bookingId);
 
     result.fold(
-          (fail) {
+      (fail) {
         setError(fail.message);
         DPrint.log('Cancel booking failed: ${fail.message}');
         isCancelling.value = false;
         return false;
       },
-          (success) {
+      (success) {
         // Remove the cancelled booking from local list
         final currentBookings = bookings;
         currentBookings.removeWhere((b) => b.id == bookingId);
 
         // Update the reactive value (triggers UI rebuild)
-        bookingResponse.value = GetAllBookingResponseModel(bookings: currentBookings);
+        bookingResponse.value = GetAllBookingResponseModel(
+          bookings: currentBookings,
+        );
 
         DPrint.log('Booking $bookingId cancelled successfully');
         Get.snackbar(
